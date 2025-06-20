@@ -1,27 +1,6 @@
 <script>
 import Chart from 'chart.js/auto';
 
-const ctx = document.getElementById('myChart');
-
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-
 export default {
   name: 'Dashboard',
   data() {
@@ -30,32 +9,415 @@ export default {
       selectedMonth: 0,
       years: [2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030],
       months: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
-      summaryCards: [
-        { amount: 15000000000, label: 'KONSENSI AERO' },
-        { amount: 15000000000, label: 'KONSENSI NON-AERO' },
-        { amount: 15000000000, label: 'KONSENSI DIGITAL & IKLAN' },
-        { amount: 15000000000, label: 'LISTRIK' }
-      ],
-      topService: 'Aeronautika',
-      topCategory: 'Pelayanan Jasa',
-      contributions: [
-        { label: 'Aeronautika', percentage: 36 },
-        { label: 'Non Aeronautika', percentage: 25 },
-        { label: 'Kerjasama', percentage: 23 },
-        { label: 'Lain-lain', percentage: 16 }
-      ]
+      
+      // Data terstruktur berdasarkan tahun dan bulan
+      dataByYearMonth: {
+        2022: {
+          0: { // Januari
+            summaryCards: [
+              { amount: 12000000000, label: 'KONSENSI AERO' },
+              { amount: 8000000000, label: 'KONSENSI NON-AERO' },
+              { amount: 5000000000, label: 'KONSENSI DIGITAL & IKLAN' },
+              { amount: 3000000000, label: 'LISTRIK' }
+            ],
+            pendapatanTahunan: 'Rp.850.000.000.000',
+            pendapatanBulanan: 'Rp.750.000.000.000',
+            contributions: [
+              { label: 'Aeronautika', percentage: 40 },
+              { label: 'Non Aeronautika', percentage: 30 },
+              { label: 'Kerjasama', percentage: 20 },
+              { label: 'Lain-lain', percentage: 10 }
+            ],
+            mitraData: [1000000, 1500000, 250000, 400000, 1800000, 280000, 900000, 450000, 600000, 1300000],
+            pieChartData: [
+              { label: 'Konsesi Tenan', value: 25000000, color: 'blue' },
+              { label: 'Konsesi Wrapping', value: 35000000, color: 'red' },
+              { label: 'Parkir Reguler', value: 20000000, color: 'yellow' },
+              { label: 'Parkir Inap', value: 15000000, color: 'green' },
+              { label: 'Konsesi Ground Handling', value: 30000000, color: 'purple' },
+              { label: 'Fuel Throughput', value: 40000000, color: 'orange' }
+            ]
+          },
+          1: { // Februari
+            summaryCards: [
+              { amount: 13000000000, label: 'KONSENSI AERO' },
+              { amount: 9000000000, label: 'KONSENSI NON-AERO' },
+              { amount: 6000000000, label: 'KONSENSI DIGITAL & IKLAN' },
+              { amount: 3500000000, label: 'LISTRIK' }
+            ],
+            pendapatanTahunan: 'Rp.900.000.000.000',
+            pendapatanBulanan: 'Rp.800.000.000.000',
+            contributions: [
+              { label: 'Aeronautika', percentage: 38 },
+              { label: 'Non Aeronautika', percentage: 28 },
+              { label: 'Kerjasama', percentage: 22 },
+              { label: 'Lain-lain', percentage: 12 }
+            ],
+            mitraData: [1100000, 1600000, 300000, 450000, 1900000, 320000, 950000, 500000, 650000, 1400000],
+            pieChartData: [
+              { label: 'Konsesi Tenan', value: 28000000, color: 'blue' },
+              { label: 'Konsesi Wrapping', value: 38000000, color: 'red' },
+              { label: 'Parkir Reguler', value: 22000000, color: 'yellow' },
+              { label: 'Parkir Inap', value: 18000000, color: 'green' },
+              { label: 'Konsesi Ground Handling', value: 32000000, color: 'purple' },
+              { label: 'Fuel Throughput', value: 42000000, color: 'orange' }
+            ]
+          }
+        },
+        2023: {
+          0: { // Januari
+            summaryCards: [
+              { amount: 14000000000, label: 'KONSENSI AERO' },
+              { amount: 10000000000, label: 'KONSENSI NON-AERO' },
+              { amount: 7000000000, label: 'KONSENSI DIGITAL & IKLAN' },
+              { amount: 4000000000, label: 'LISTRIK' }
+            ],
+            pendapatanTahunan: 'Rp.950.000.000.000',
+            pendapatanBulanan: 'Rp.850.000.000.000',
+            contributions: [
+              { label: 'Aeronautika', percentage: 35 },
+              { label: 'Non Aeronautika', percentage: 30 },
+              { label: 'Kerjasama', percentage: 25 },
+              { label: 'Lain-lain', percentage: 10 }
+            ],
+            mitraData: [1150000, 1700000, 350000, 500000, 1950000, 350000, 1000000, 550000, 700000, 1450000],
+            pieChartData: [
+              { label: 'Konsesi Tenan', value: 30000000, color: 'blue' },
+              { label: 'Konsesi Wrapping', value: 45000000, color: 'red' },
+              { label: 'Parkir Reguler', value: 25000000, color: 'yellow' },
+              { label: 'Parkir Inap', value: 20000000, color: 'green' },
+              { label: 'Konsesi Ground Handling', value: 35000000, color: 'purple' },
+              { label: 'Fuel Throughput', value: 50000000, color: 'orange' }
+            ]
+          },
+          1: { // Februari
+            summaryCards: [
+              { amount: 15500000000, label: 'KONSENSI AERO' },
+              { amount: 11000000000, label: 'KONSENSI NON-AERO' },
+              { amount: 8000000000, label: 'KONSENSI DIGITAL & IKLAN' },
+              { amount: 4500000000, label: 'LISTRIK' }
+            ],
+            pendapatanTahunan: 'Rp.1.000.000.000.000',
+            pendapatanBulanan: 'Rp.900.000.000.000',
+            contributions: [
+              { label: 'Aeronautika', percentage: 37 },
+              { label: 'Non Aeronautika', percentage: 28 },
+              { label: 'Kerjasama', percentage: 24 },
+              { label: 'Lain-lain', percentage: 11 }
+            ],
+            mitraData: [1250000, 1800000, 400000, 550000, 2100000, 380000, 1100000, 600000, 750000, 1500000],
+            pieChartData: [
+              { label: 'Konsesi Tenan', value: 32000000, color: 'blue' },
+              { label: 'Konsesi Wrapping', value: 48000000, color: 'red' },
+              { label: 'Parkir Reguler', value: 28000000, color: 'yellow' },
+              { label: 'Parkir Inap', value: 22000000, color: 'green' },
+              { label: 'Konsesi Ground Handling', value: 38000000, color: 'purple' },
+              { label: 'Fuel Throughput', value: 52000000, color: 'orange' }
+            ]
+          }
+        },
+        2024: {
+          0: { // Januari (data default yang sudah ada)
+            summaryCards: [
+              { amount: 15000000000, label: 'KONSENSI AERO' },
+              { amount: 15000000000, label: 'KONSENSI NON-AERO' },
+              { amount: 15000000000, label: 'KONSENSI DIGITAL & IKLAN' },
+              { amount: 15000000000, label: 'LISTRIK' }
+            ],
+            pendapatanTahunan: 'Rp.999.999.999.999',
+            pendapatanBulanan: 'Rp.999.999.999.999',
+            contributions: [
+              { label: 'Aeronautika', percentage: 36 },
+              { label: 'Non Aeronautika', percentage: 25 },
+              { label: 'Kerjasama', percentage: 23 },
+              { label: 'Lain-lain', percentage: 16 }
+            ],
+            mitraData: [1200000, 1900000, 300000, 500000, 2000000, 300000, 1000000, 500000, 700000, 1500000],
+            pieChartData: [
+              { label: 'Konsesi Tenan', value: 40000000, color: 'blue' },
+              { label: 'Konsesi Wrapping', value: 40000000, color: 'red' },
+              { label: 'Parkir Reguler', value: 40000000, color: 'yellow' },
+              { label: 'Parkir Inap', value: 40000000, color: 'green' },
+              { label: 'Konsesi Ground Handling', value: 40000000, color: 'purple' },
+              { label: 'Fuel Throughput', value: 40000000, color: 'orange' }
+            ]
+          },
+          1: { // Februari
+            summaryCards: [
+              { amount: 16000000000, label: 'KONSENSI AERO' },
+              { amount: 16500000000, label: 'KONSENSI NON-AERO' },
+              { amount: 14000000000, label: 'KONSENSI DIGITAL & IKLAN' },
+              { amount: 13000000000, label: 'LISTRIK' }
+            ],
+            pendapatanTahunan: 'Rp.1.200.000.000.000',
+            pendapatanBulanan: 'Rp.1.100.000.000.000',
+            contributions: [
+              { label: 'Aeronautika', percentage: 38 },
+              { label: 'Non Aeronautika', percentage: 27 },
+              { label: 'Kerjasama', percentage: 22 },
+              { label: 'Lain-lain', percentage: 13 }
+            ],
+            mitraData: [1300000, 2000000, 350000, 550000, 2200000, 350000, 1100000, 550000, 750000, 1600000],
+            pieChartData: [
+              { label: 'Konsesi Tenan', value: 45000000, color: 'blue' },
+              { label: 'Konsesi Wrapping', value: 35000000, color: 'red' },
+              { label: 'Parkir Reguler', value: 30000000, color: 'yellow' },
+              { label: 'Parkir Inap', value: 38000000, color: 'green' },
+              { label: 'Konsesi Ground Handling', value: 42000000, color: 'purple' },
+              { label: 'Fuel Throughput', value: 50000000, color: 'orange' }
+            ]
+          }
+        }
+      },
+      
+      mitraLabels: ['AngkasaPura', 'AirNavIndonesia', 'Citilink', 'PelitaAir', 'BatikAir', 'LionAir', 'GarudaIndonesia', 'GlobalSkyAviasi', 'Pertamina', 'Injourney'],
+      chart: null
+    };
+  },
+  
+  computed: {
+    // Computed property untuk mendapatkan data sesuai tahun dan bulan yang dipilih
+    currentData() {
+      const yearData = this.dataByYearMonth[this.selectedYear];
+      if (!yearData) {
+        return this.getDefaultData();
+      }
+      
+      const monthData = yearData[this.selectedMonth];
+      if (!monthData) {
+        return this.getDefaultData();
+      }
+      
+      return monthData;
+    },
+    
+    summaryCards() {
+      return this.currentData.summaryCards;
+    },
+    
+    pendapatanTahunan() {
+      return this.currentData.pendapatanTahunan;
+    },
+    
+    pendapatanBulanan() {
+      return this.currentData.pendapatanBulanan;
+    },
+    
+    contributions() {
+      return this.currentData.contributions;
+    },
+    
+    mitraData() {
+      return this.currentData.mitraData;
+    },
+
+    pieChartData() {
+      return this.currentData.pieChartData;
+    },
+
+    // Computed property untuk mendapatkan persentase pie chart
+    pieChartPercentages() {
+      const total = this.pieChartData.reduce((sum, item) => sum + item.value, 0);
+      let cumulativePercentage = 0;
+      
+      return this.pieChartData.map(item => {
+        const percentage = (item.value / total) * 100;
+        const result = {
+          ...item,
+          percentage,
+          cumulativePercentage
+        };
+        cumulativePercentage += percentage;
+        return result;
+      });
+    },
+
+    // Computed property untuk CSS gradient pie chart
+    pieChartGradient() {
+      let gradient = 'conic-gradient(from 0deg,';
+      let currentPercentage = 0;
+      
+      this.pieChartPercentages.forEach((item, index) => {
+        if (index > 0) {
+          gradient += `, ${item.color} ${currentPercentage}%`;
+        } else {
+          gradient += ` ${item.color} 0%`;
+        }
+        currentPercentage += item.percentage;
+        gradient += `, ${item.color} ${currentPercentage}%`;
+      });
+      
+      gradient += ')';
+      return gradient;
     }
   },
+  
+  watch: {
+    // Watch untuk memperbarui chart ketika tahun atau bulan berubah
+    selectedYear() {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.updateChart();
+        }, 50);
+      });
+    },
+    selectedMonth() {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.updateChart();
+        }, 50);
+      });
+    }
+  },
+  
   methods: {
     formatCurrency(value) {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
         minimumFractionDigits: 0
-      }).format(value)
+      }).format(value);
+    },
+    
+    getDefaultData() {
+      // Default data jika tidak ada data untuk tahun/bulan yang dipilih
+      return {
+        summaryCards: [
+          { amount: 0, label: 'KONSENSI AERO' },
+          { amount: 0, label: 'KONSENSI NON-AERO' },
+          { amount: 0, label: 'KONSENSI DIGITAL & IKLAN' },
+          { amount: 0, label: 'LISTRIK' }
+        ],
+        pendapatanTahunan: 'Rp.0',
+        pendapatanBulanan: 'Rp.0',
+        contributions: [
+          { label: 'Aeronautika', percentage: 0 },
+          { label: 'Non Aeronautika', percentage: 0 },
+          { label: 'Kerjasama', percentage: 0 },
+          { label: 'Lain-lain', percentage: 0 }
+        ],
+        mitraData: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        pieChartData: [
+          { label: 'Konsesi Tenan', value: 0, color: 'blue' },
+          { label: 'Konsesi Wrapping', value: 0, color: 'red' },
+          { label: 'Parkir Reguler', value: 0, color: 'yellow' },
+          { label: 'Parkir Inap', value: 0, color: 'green' },
+          { label: 'Konsesi Ground Handling', value: 0, color: 'purple' },
+          { label: 'Fuel Throughput', value: 0, color: 'orange' }
+        ]
+      };
+    },
+    
+    createChart() {
+      const ctx = document.getElementById('myChart');
+      
+      if (!ctx) {
+        console.warn('Canvas element not found');
+        return;
+      }
+
+      // Destroy existing chart if it exists
+      this.destroyChart();
+      
+      try {
+        this.chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: this.mitraLabels,
+            datasets: [{
+              label: `Pendapatan ${this.months[this.selectedMonth]} ${this.selectedYear}`,
+              data: this.mitraData,
+              backgroundColor: '#4e73df',
+              borderColor: '#4e73df',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top'
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const val = context.parsed.y;
+                    return `${context.dataset.label}: Rp.${val.toLocaleString('id-ID')}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return 'Rp.' + value.toLocaleString('id-ID');
+                  }
+                }
+              },
+              x: {
+                ticks: {
+                  maxRotation: 45,
+                  minRotation: 0
+                }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error creating chart:', error);
+      }
+    },
+
+    destroyChart() {
+      if (this.chart) {
+        try {
+          this.chart.destroy();
+          this.chart = null;
+        } catch (error) {
+          console.error('Error destroying chart:', error);
+          this.chart = null;
+        }
+      }
+    },
+    
+    updateChart() {
+      if (!this.chart) {
+        this.createChart();
+        return;
+      }
+
+      try {
+        // Update data chart
+        this.chart.data.datasets[0].data = this.mitraData;
+        this.chart.data.datasets[0].label = `Pendapatan ${this.months[this.selectedMonth]} ${this.selectedYear}`;
+        
+        // Update chart
+        this.chart.update('none');
+      } catch (error) {
+        console.error('Error updating chart:', error);
+        // If update fails, recreate the chart
+        this.createChart();
+      }
     }
+  },
+  
+  mounted() {
+    // Delay chart creation to ensure DOM is ready
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.createChart();
+      }, 100);
+    });
+  },
+  
+  beforeUnmount() {
+    this.destroyChart();
   }
-}
+};
 </script>
 
 <template>
@@ -103,13 +465,13 @@ export default {
       <!-- Sidebar -->
       <div class="sidebar">
         <div class="info-card teal-card">
-          <h3>Jenis Layanan Terbesar</h3>
-          <p class="value">{{ topService }}</p>
+          <h3>Pendapatan / Tahun</h3>
+          <p class="value">{{ pendapatanTahunan }}</p>
         </div>
 
         <div class="info-card blue-card">
-          <h3>Kategori Tertinggi</h3>
-          <p class="value">{{ topCategory }}</p>
+          <h3>Pendapatan / Bulanan</h3>
+          <p class="value">{{ pendapatanBulanan }}</p>
         </div>
 
         <div class="contribution-card">
@@ -128,14 +490,11 @@ export default {
         <div class="chart-card">
           <h3>Bulanan</h3>
           <figure class="charts">
-            <div class="pie"></div>
+            <div class="pie" :style="{ backgroundImage: pieChartGradient }"></div>
             <figcaption class="legends">
-              <span>Konsesi Tenan = Rp.40.000.000</span>
-              <span>Konsesi Wrapping = Rp.40.000.000</span>
-              <span>Parkir Reguler = Rp.40.000.000</span>
-              <span>Parkir Inap = Rp.40.000.000</span>
-              <span>Konsesi Ground Handling = Rp.40.000.000</span>
-              <span>Fuel Throughput = Rp.40.000.000</span>
+              <span v-for="(item, index) in pieChartData" :key="index" :data-color="item.color">
+                {{ item.label }} = {{ formatCurrency(item.value) }}
+              </span>
             </figcaption>
           </figure>
         </div>
@@ -145,7 +504,9 @@ export default {
         </div>
         <div class="chart-card highlight">
           <h3>10 Mitra Pendapatan Terbesar</h3>
-          <div><canvas id="myChart"></canvas></div>
+          <div class="BarChart">
+            <canvas id="myChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -307,12 +668,6 @@ export default {
 }
 
 .charts-section {
-  --c1: blue;
-  --c2: red;
-  --c3: yellow;
-  --c4: green;
-  --c5: purple;
-  --c6: orange;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
@@ -326,8 +681,18 @@ export default {
 }
 
 .chart-card.highlight {
+  width: 1125px;
   grid-column: span 2;
   border: 2px solid #ffd700;
+}
+
+.BarChart {
+  height: 400px;
+  position: relative;
+}
+
+.BarChart canvas {
+  max-height: 400px;
 }
 
 .chart-card h3 {
@@ -357,15 +722,7 @@ export default {
   max-width: 225px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background-image: 
-  conic-gradient(from 30deg,
-    var(--c1) 20%,
-    var(--c2) 0 40%,
-    var(--c3) 0 60%,
-    var(--c4) 0 75%,
-    var(--c5) 0 90%,
-    var(--c6) 0 100%
-  );
+  transition: background-image 0.3s ease;
 }
 
 .legends {
@@ -392,28 +749,28 @@ export default {
   border-radius: 50%;
 }
 
-.legends span:nth-child(1)::before {
-  background-color: var(--c1);
+.legends span[data-color="blue"]::before {
+  background-color: blue;
 }
 
-.legends span:nth-child(2)::before {
-  background-color: var(--c2);
+.legends span[data-color="red"]::before {
+  background-color: red;
 }
 
-.legends span:nth-child(3)::before {
-  background-color: var(--c3);
+.legends span[data-color="yellow"]::before {
+  background-color: yellow;
 }
 
-.legends span:nth-child(4)::before {
-  background-color: var(--c4);
+.legends span[data-color="green"]::before {
+  background-color: green;
 }
 
-.legends span:nth-child(5)::before {
-  background-color: var(--c5);
+.legends span[data-color="purple"]::before {
+  background-color: purple;
 }
 
-.legends span:nth-child(6)::before {
-  background-color: var(--c6);
+.legends span[data-color="orange"]::before {
+  background-color: orange;
 }
 
 @media (max-width: 1200px) {
@@ -427,6 +784,7 @@ export default {
   
   .chart-card.highlight {
     grid-column: span 1;
+    width: auto;
   }
 }
 
