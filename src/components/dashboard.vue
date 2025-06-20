@@ -7,7 +7,6 @@ export default {
     return {
       selectedYear: 2024,
       selectedMonth: 0,
-      years: [2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030],
       months: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
       
       // Data terstruktur berdasarkan tahun dan bulan
@@ -171,11 +170,27 @@ export default {
       },
       
       mitraLabels: ['AngkasaPura', 'AirNavIndonesia', 'Citilink', 'PelitaAir', 'BatikAir', 'LionAir', 'GarudaIndonesia', 'GlobalSkyAviasi', 'Pertamina', 'Injourney'],
-      chart: null
+      chart: null,
+      isChartReady: false
     };
   },
   
   computed: {
+    // Dynamic year range computation
+    years() {
+      const currentYear = new Date().getFullYear();
+      const startYear = 2022; // Keep data from 2022 onwards
+      const futureYears = 3; // Show 3 years into the future
+      const endYear = currentYear + futureYears;
+      
+      const yearArray = [];
+      for (let year = startYear; year <= endYear; year++) {
+        yearArray.push(year);
+      }
+      
+      return yearArray;
+    },
+    
     // Computed property untuk mendapatkan data sesuai tahun dan bulan yang dipilih
     currentData() {
       const yearData = this.dataByYearMonth[this.selectedYear];
@@ -255,18 +270,10 @@ export default {
   watch: {
     // Watch untuk memperbarui chart ketika tahun atau bulan berubah
     selectedYear() {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.updateChart();
-        }, 50);
-      });
+      this.updateChartData();
     },
     selectedMonth() {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.updateChart();
-        }, 50);
-      });
+      this.updateChartData();
     }
   },
   
@@ -308,25 +315,73 @@ export default {
       };
     },
     
-    createChart() {
-      const ctx = document.getElementById('myChart');
-      
-      if (!ctx) {
-        console.warn('Canvas element not found');
-        return;
+    // Method to initialize selected year based on current year
+    initializeSelectedYear() {
+      const currentYear = new Date().getFullYear();
+      // Set to current year if it exists in years array, otherwise keep default
+      if (this.years.includes(currentYear)) {
+        this.selectedYear = currentYear;
+      } else {
+        // If current year is not in range, set to the closest available year
+        this.selectedYear = this.years.find(year => year >= currentYear) || this.years[this.years.length - 1];
       }
+    },
+    
+    waitForElement(selector, timeout = 5000) {
+      return new Promise((resolve, reject) => {
+        const element = document.querySelector(selector);
+        if (element) {
+          resolve(element);
+          return;
+        }
 
-      // Destroy existing chart if it exists
-      this.destroyChart();
-      
+        const observer = new MutationObserver(() => {
+          const element = document.querySelector(selector);
+          if (element) {
+            observer.disconnect();
+            resolve(element);
+          }
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+
+        setTimeout(() => {
+          observer.disconnect();
+          reject(new Error(`Element ${selector} not found within ${timeout}ms`));
+        }, timeout);
+      });
+    },
+    
+    async createChart() {
       try {
-        this.chart = new Chart(ctx, {
+        // Wait for the canvas element to be available
+        const ctx = await this.waitForElement('#myChart');
+        
+        // Destroy existing chart if it exists
+        this.destroyChart();
+        
+        // Verify canvas context is available
+        if (!ctx || !ctx.getContext) {
+          console.warn('Canvas element not properly initialized');
+          return;
+        }
+
+        const canvasContext = ctx.getContext('2d');
+        if (!canvasContext) {
+          console.warn('Canvas 2D context not available');
+          return;
+        }
+        
+        this.chart = new Chart(canvasContext, {
           type: 'bar',
           data: {
             labels: this.mitraLabels,
             datasets: [{
               label: `Pendapatan ${this.months[this.selectedMonth]} ${this.selectedYear}`,
-              data: this.mitraData,
+              data: [...this.mitraData], // Create a copy to avoid reference issues
               backgroundColor: '#4e73df',
               borderColor: '#4e73df',
               borderWidth: 1
@@ -335,6 +390,9 @@ export default {
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+              duration: 0 // Disable animations to prevent timing issues
+            },
             plugins: {
               legend: {
                 display: true,
@@ -367,8 +425,12 @@ export default {
             }
           }
         });
+        
+        this.isChartReady = true;
+        console.log('Chart created successfully');
       } catch (error) {
         console.error('Error creating chart:', error);
+        this.isChartReady = false;
       }
     },
 
@@ -377,26 +439,29 @@ export default {
         try {
           this.chart.destroy();
           this.chart = null;
+          this.isChartReady = false;
         } catch (error) {
           console.error('Error destroying chart:', error);
           this.chart = null;
+          this.isChartReady = false;
         }
       }
     },
     
-    updateChart() {
-      if (!this.chart) {
+    updateChartData() {
+      if (!this.isChartReady || !this.chart) {
+        console.log('Chart not ready, attempting to create...');
         this.createChart();
         return;
       }
 
       try {
-        // Update data chart
-        this.chart.data.datasets[0].data = this.mitraData;
-        this.chart.data.datasets[0].label = `Pendapatan ${this.months[this.selectedMonth]} ${this.selectedYear}`;
-        
-        // Update chart
-        this.chart.update('none');
+        // Safely update chart data
+        if (this.chart.data && this.chart.data.datasets && this.chart.data.datasets[0]) {
+          this.chart.data.datasets[0].data = [...this.mitraData];
+          this.chart.data.datasets[0].label = `Pendapatan ${this.months[this.selectedMonth]} ${this.selectedYear}`;
+          this.chart.update('none'); // Update without animation
+        }
       } catch (error) {
         console.error('Error updating chart:', error);
         // If update fails, recreate the chart
@@ -406,11 +471,16 @@ export default {
   },
   
   mounted() {
-    // Delay chart creation to ensure DOM is ready
+    // Initialize selected year based on current year
+    this.initializeSelectedYear();
+    
+    // Use requestAnimationFrame to ensure DOM is fully rendered
     this.$nextTick(() => {
-      setTimeout(() => {
-        this.createChart();
-      }, 100);
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          this.createChart();
+        }, 200); // Increased timeout for better reliability
+      });
     });
   },
   
